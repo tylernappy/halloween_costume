@@ -20,30 +20,41 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 var nLogos = 0
 var nFaces = 0
+var c = 0.2
+var powerBar
+var hashTag = 'halloweeniot'
 
-twitterClient.stream('statuses/filter', {track: 'halloweeniot'}, function(stream) {
+twitterClient.stream('statuses/filter', {track: hashTag}, function(stream) {
   stream.on('data', function(tweet) {
     console.log("------------------------------")
     console.log(tweet.text)
     debugger
     var imageUrl = tweet.extended_entities.media[0].media_url
-    var data1 = {image_type: 'complex_3d', indexes: 'corporatelogos', url: imageUrl}
-    hodClient.call('recognizeimages', data1, function(err1, resp1, body1){
-      debugger
-      var logos = resp1.body.object
-      for (var i=0; i<logos.length; i++) { nLogos += 1; }
-      var data2 = {url: imageUrl}
-      hodClient.call('detectfaces', data2, function(err2, resp2, body2){
+    if (imageUrl) {
+      var data1 = {url: imageUrl}
+      hodClient.call('detectfaces', data1, function(err1, resp1, body1) {
         debugger
-        var faces = resp2.body.face
-        for (var i=0; i<faces.length; i++) { nFaces += 1; }
-        console.log("# Faces " + nFaces)
-        console.log("# Logos " + nLogos)
-        //
-        // Microcontroller access software
-        //
+        var faces = resp1.body.face
+        if (faces.length>0){
+          for (var i=0; i<faces.length; i++) { nFaces += 1; }
+          var data2 = {image_type: 'complex_3d', indexes: 'corporatelogos', url: imageUrl}
+          hodClient.call('recognizeimages', data2, function(err2, resp2, body2) {
+            debugger
+            var logos = resp2.body.object
+            for (var i=0; i<logos.length; i++) {
+              if( logos[i].name ==="HPQ" ){ nLogos += 1; } // increase only if logo is HP
+            }
+            powerBar = Math.floor( nFaces*(1 + c*nLogos) )
+            console.log("# Faces " + nFaces)
+            console.log("# Logos " + nLogos)
+            console.log("Power bar " + powerBar)
+            //
+            // Microcontroller access software
+            //
+          })
+        }
       })
-    })
+    }
   })
 
   stream.on('error', function(error) {
