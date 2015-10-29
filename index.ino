@@ -1,73 +1,114 @@
-// // This #include statement was automatically added by the Particle IDE.
-// #include "neopixel/neopixel.h"
-
-/*
- * This is a minimal example, see extra-examples.cpp for a version
- * with more explantory documentation, example routines, how to
- * hook up your pixels and all of the pixel types that are supported.
- *
- */
-
+#include <string.h>
 #include "application.h"
 //#include "spark_disable_wlan.h" // For faster local debugging only
 #include "neopixel/neopixel.h"
 
 // IMPORTANT: Set pixel COUNT, PIN and TYPE
-#define PIXEL_PIN A5
-#define PIXEL_COUNT 60
+#define PIXEL_PIN D6
+#define PIXEL_COUNT 48
 #define PIXEL_TYPE WS2812B
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
 
-void setup()
-{
+void setup() {
+
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
+  initialize();
 
-  Spark.function("led_strip", receiveCommand);
+  Spark.function("sendFaces", updateFaces);
+  Spark.function("sendLogos", updateLogos);
+  Spark.function("sendPowerBar", updatePowerBar);
 }
-void loop()
-{
+
+void loop() {
     delay(20);
 }
 
-void rainbow(uint8_t wait) {
-  uint16_t i, j;
-
-  for(j=0; j<256; j++) {
-    for(i=0; i<strip.numPixels(); i++) {
-      strip.setPixelColor(i, Wheel((i+j) & 255));
+void initialize() {
+    for(int i = 0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(255, 255, 255));
     }
     strip.show();
-    delay(wait);
-  }
-}
-
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-uint32_t Wheel(byte WheelPos) {
-  if(WheelPos < 85) {
-   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-  } else if(WheelPos < 170) {
-   WheelPos -= 85;
-   return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  } else {
-   WheelPos -= 170;
-   return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
+    delay(2000);
+    for(int i = 0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+    }
+    strip.show();
+    delay(2000);
+    for(int i = 0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(255, 255, 255));
+    }
+    strip.show();
+    delay(2000);
+    for(int i = 0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+    }
+    strip.show();
+    delay(30);
 }
 
 //SparkCoreFunction
-int receiveCommand(String command) {
+int updateFaces(String command) {
+    int n = command.toInt(); //find amount of things tweeted in
+    int level = n%12; //find the actual amount of LEDs to light
+    int colorLevel = n/12; //find the color
+    int colors[3];
+    if (colorLevel<1) {
+        int colors[] = {0, 0, 255}; // [r, g, b]
+    } else if (colorLevel < 2 && colorLevel >= 1) {
+        int colors[] = {255, 0, 255}; // [r, g, b]
+    } else if (colorLevel < 3 && colorLevel >= 2) {
+        int colors[] = {0, 0, 255}; // [r, g, b]
+    } else {
+        int colors[] = {0, 0, 255};
+    }
+    for(int i = 0; i < level; i++) {
+        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+    }
+    strip.show();
+    return 1;
+}
 
-    if(command.substring(0.2) == "red") solidLights(255, 0, 0);
-    else if(command.substring(0.4) == "green") solidLights(0, 0, 255);
-    else if(command.substring(0.3) == "blue") solidLights(0, 255, 0);
-    else if(command.substring(0.6) == "mailjet") mailjetLight();
-    else if(command.substring(0.8) == "christmas") christmasLight();
-    else if(command.substring(0.6) == "rainbow") rainbow(100);
-    else return -1;
+int updateLogos(String command) {
+    int n = command.toInt(); //find amount of things tweeted in
+    int level = n%12; //find the actual amount of LEDs to light
+    int colorLevel = n/12; //find the color
+    int colors[3];
+    if (colorLevel<1) {
+        int colors[] = {0, 255, 0}; // [r, g, b]
+    } else if (colorLevel < 2 && colorLevel >= 1) {
+        int colors[] = {255, 255, 0}; // [r, g, b]
+    } else if (colorLevel < 3 && colorLevel >= 2) {
+        int colors[] = {0, 255, 0}; // [r, g, b]
+    } else {
+        int colors[] = {0, 255, 0};
+    }
+    for(int i = 0; i > 11-level; i--) { //count backwards from level (11 is the total amount of LED's on the ring)
+        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+    }
+    strip.show();
+    return 1;
+}
 
+int updatePowerBar(String command) {
+    int n = command.toInt(); //find amount of things tweeted in
+    int level = n%24; //find the actual amount of LEDs to light
+    int colorLevel = n/24; //find the color
+    int colors[3];
+    if (colorLevel<1) {
+        int colors[] = {255, 0, 0}; // [r, g, b]
+    } else if (colorLevel < 2 && colorLevel >= 1) {
+        int colors[] = {122, 122, 122}; // [r, g, b]
+    } else if (colorLevel < 3 && colorLevel >= 2) {
+        int colors[] = {255, 255, 255}; // [r, g, b]
+    } else {
+        int colors[] = {255, 255, 255};
+    }
+    for(int i = 0; i < level; i++) { //count backwards from level (11 is the total amount of LED's on the ring)
+        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+    }
+    strip.show();
     return 1;
 }
 
