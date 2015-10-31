@@ -9,6 +9,7 @@ var havenondemand = require('havenondemand')
 var hodClient = new havenondemand.HODClient('http://api.havenondemand.com', process.env.hpe_apikey)
 var Twitter = require('twitter')
 var jsonfile = require('jsonfile')
+var http = require('http')
 
 var twitterClient = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -95,3 +96,8 @@ spark.getDevice(process.env.device_id_spark, function(err, device) {
     })
   })
 })
+
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'})
+  res.send('it is running\n')
+}).listen(port)
