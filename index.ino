@@ -11,6 +11,8 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println("Starting up...");
 
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -52,107 +54,148 @@ void initialize() {
 int updateFaces(String command) {
     int n = command.toInt(); //find amount of things tweeted in
     int level = n%12; //find the actual amount of LEDs to light
-    int colorLevel = n/12; //find the color
-    int colors[3];
+    float colorLevel = (float)n/12.0; //find the color
+    int red;
+    int green;
+    int blue;
     if (colorLevel<1) {
-        int colors[] = {0, 0, 255}; // [r, g, b]
+        red = 0;
+        green = 0;
+        blue = 255;
     } else if (colorLevel < 2 && colorLevel >= 1) {
-        int colors[] = {255, 0, 255}; // [r, g, b]
+        red = 255;
+        green = 0;
+        blue = 255;
     } else if (colorLevel < 3 && colorLevel >= 2) {
-        int colors[] = {0, 0, 255}; // [r, g, b]
+        red = 255;
+        green = 0;
+        blue = 0;
     } else {
-        int colors[] = {0, 0, 255};
+        red = 255;
+        green = 0;
+        blue = 0;
     }
+
     for(int i = 0; i < level; i++) {
-        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+        strip.setPixelColor(i, strip.Color(red, green, blue));
     }
+    Serial.println("Faces ---------");
+    Serial.print("n: ");
+    Serial.println(n);
+    Serial.print("level: ");
+    Serial.println(level);
+    Serial.print("colorLevel: ");
+    Serial.println(colorLevel);
+    Serial.print("red: ");
+    Serial.print(red);
+    Serial.print(", green: ");
+    Serial.print(green);
+    Serial.print(", blue: ");
+    Serial.println(blue);
+
     strip.show();
+    delay(40);
     return 1;
 }
 
 int updateLogos(String command) {
     int n = command.toInt(); //find amount of things tweeted in
     int level = n%12; //find the actual amount of LEDs to light
-    int colorLevel = n/12; //find the color
-    int colors[3];
+    float colorLevel = (float)n/12.0; //find the color
+    int red;
+    int green;
+    int blue;
     if (colorLevel<1) {
-        int colors[] = {0, 255, 0}; // [r, g, b]
+        red = 0;
+        green = 255;
+        blue = 0;
     } else if (colorLevel < 2 && colorLevel >= 1) {
-        int colors[] = {255, 255, 0}; // [r, g, b]
+        red = 0;
+        green = 255;
+        blue = 255;
     } else if (colorLevel < 3 && colorLevel >= 2) {
-        int colors[] = {0, 255, 0}; // [r, g, b]
+        red = 0;
+        green = 0;
+        blue = 255;
     } else {
-        int colors[] = {0, 255, 0};
+        red = 0;
+        green = 0;
+        blue = 255;
     }
-    for(int i = 0; i > 11-level; i--) { //count backwards from level (11 is the total amount of LED's on the ring)
-        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+    for(int i = 23; i > 23-level; i--) { //count backwards from level (11 is the total amount of LED's on the ring)
+        strip.setPixelColor(i, strip.Color(red, green, blue));
     }
+    Serial.println("Logos ---------");
+    Serial.print("n: ");
+    Serial.println(n);
+    Serial.print("level: ");
+    Serial.println(level);
+    Serial.print("colorLevel: ");
+    Serial.println(colorLevel);
+    Serial.print("red: ");
+    Serial.print(red);
+    Serial.print(", green: ");
+    Serial.print(green);
+    Serial.print(", blue: ");
+    Serial.println(blue);
+
     strip.show();
+    delay(40);
     return 1;
 }
 
 int updatePowerBar(String command) {
     int n = command.toInt(); //find amount of things tweeted in
     int level = n%24; //find the actual amount of LEDs to light
-    int colorLevel = n/24; //find the color
-    int colors[3];
+    float colorLevel = (float)n/24.0; //find the color
+    int red;
+    int green;
+    int blue;
     if (colorLevel<1) {
-        int colors[] = {255, 0, 0}; // [r, g, b]
+        red = 255;
+        green = 0;
+        blue = 0;
     } else if (colorLevel < 2 && colorLevel >= 1) {
-        int colors[] = {122, 122, 122}; // [r, g, b]
+        red = 122;
+        green = 122;
+        blue = 122;
     } else if (colorLevel < 3 && colorLevel >= 2) {
-        int colors[] = {255, 255, 255}; // [r, g, b]
+        red = 255;
+        green = 0;
+        blue = 255;
     } else {
-        int colors[] = {255, 255, 255};
+        red = 255;
+        green = 0;
+        blue = 255;
     }
-    for(int i = 0; i < level; i++) { //count backwards from level (11 is the total amount of LED's on the ring)
-        strip.setPixelColor(i, strip.Color(colors[0], colors[1], colors[2]));
+    for(int i = 24; i < (level + 24); i++) { //count backwards from level (11 is the total amount of LED's on the ring)
+        strip.setPixelColor(i, strip.Color(red, green, blue));
     }
+
+
+    Serial.println("Power Bar ---------");
+    Serial.print("n: ");
+    Serial.println(n);
+    Serial.print("level: ");
+    Serial.println(level);
+    Serial.print("colorLevel: ");
+    Serial.println(colorLevel);
+    Serial.print("red: ");
+    Serial.print(red);
+    Serial.print(", green: ");
+    Serial.print(green);
+    Serial.print(", blue: ");
+    Serial.println(blue);
+
     strip.show();
+    delay(40);
     return 1;
 }
 
 int solidLights(int redValue, int blueValue, int greenValue) {
-   //strip.Color(redValue, greenValue, blueValue)
    uint16_t i, j;
    for(i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, strip.Color(redValue, greenValue, blueValue));
-    }
-    strip.show();
-    return 1;
-}
-
-int mailjetLight() {
-    // int mailjetOrange[] = {255, 191, 64};
-    // int mailjetBlueGrey[] = {238, 237, 243};
-    // int mailjetLightBlack[] = {41, 44, 51};
-    // int mailjetLightGrey[] = {230, 230, 230};
-    // int mailjetWhite[] = {52, 152, 219};
-    uint16_t i, j;
-    int lightArray[2][3] = {{255, 204, 0}, {238, 237, 243}};
-    int lightValueForArray = 0;
-    for(i=0; i<strip.numPixels(); i++) {
-      if(lightValueForArray > (sizeof(lightArray)/(3*sizeof(int)) - 1)) lightValueForArray = 0; //lightValueForArray > 1 where 1 is number of colors in array minus 1
-      strip.setPixelColor(i, strip.Color(lightArray[lightValueForArray][0], lightArray[lightValueForArray][1], lightArray[lightValueForArray][2]));
-      lightValueForArray += 1;
-    }
-    strip.show();
-    return 1;
-}
-
-int christmasLight() {
-    // int mailjetOrange[] = {255, 191, 64};
-    // int mailjetBlueGrey[] = {238, 237, 243};
-    // int mailjetLightBlack[] = {41, 44, 51};
-    // int mailjetLightGrey[] = {230, 230, 230};
-    // int mailjetWhite[] = {52, 152, 219};
-    uint16_t i, j;
-    int lightArray[2][3] = {{255, 0, 0}, {0, 255, 0}};
-    int lightValueForArray = 0;
-    for(i=0; i<strip.numPixels(); i++) {
-      if(lightValueForArray > (sizeof(lightArray)/(3*sizeof(int)) - 1)) lightValueForArray = 0; //lightValueForArray > 1 where 1 is number of colors in array minus 1
-      strip.setPixelColor(i, strip.Color(lightArray[lightValueForArray][0], lightArray[lightValueForArray][1], lightArray[lightValueForArray][2]));
-      lightValueForArray += 1;
     }
     strip.show();
     return 1;

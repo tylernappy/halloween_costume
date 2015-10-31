@@ -50,7 +50,7 @@ spark.getDevice(process.env.device_id_spark, function(err, device) {
               for (var i=0; i<logos.length; i++) {
                 if( logos[i].name ==="HPQ" ){ nLogos += 1; } // increase only if logo is HP
               }
-              powerBar = Math.floor( nFaces*(1 + c*nLogos) )
+              powerBar = Math.ceil( nFaces*(1 + c*nLogos) )
               console.log("# Faces " + nFaces)
               console.log("# Logos " + nLogos)
               console.log("Power bar " + powerBar)
