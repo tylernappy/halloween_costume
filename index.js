@@ -35,8 +35,8 @@ spark.getDevice(process.env.device_id_spark, function(err, device) {
       console.log("------------------------------")
       console.log(tweet.text)
       debugger
-      var imageUrl = tweet.extended_entities.media[0].media_url
-      if (imageUrl) {
+      if (tweet.extended_entities) {
+        var imageUrl = tweet.extended_entities.media[0].media_url
         var data1 = {url: imageUrl}
         hodClient.call('detectfaces', data1, function(err1, resp1, body1) {
           debugger
