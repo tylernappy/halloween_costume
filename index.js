@@ -27,7 +27,7 @@ var nLogos = values.nLogos
 var nFaces = values.nFaces
 var c = 0.2
 var powerBar = values.powerBar
-var hashTag = 'halloweeniot'
+var hashTag = process.env.hash_tag
 
 spark.getDevice(process.env.device_id_spark, function(err, device) {
   debugger
