@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 var values = require('./values.json');
 var nLogos = values.nLogos
 var nFaces = values.nFaces
-var c = 0.2
+var c = 4.6
 var powerBar = values.powerBar
 var hashTag = process.env.hash_tag
 
@@ -53,7 +53,7 @@ spark.getDevice(process.env.device_id_spark, function(err, device) {
               for (var i=0; i<logos.length; i++) {
                 if( logos[i].name ==="HPQ" ){ nLogos += 1; } // increase only if logo is HP
               }
-              powerBar = Math.ceil( nFaces*(1 + c*nLogos) )
+              powerBar = Math.ceil( nFaces + c*nLogos )
               console.log("# Faces " + nFaces)
               console.log("# Logos " + nLogos)
               console.log("Power bar " + powerBar)

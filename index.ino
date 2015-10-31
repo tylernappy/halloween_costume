@@ -125,11 +125,11 @@ int updateLogos(String command) {
         if (newColorLevel<1) {
             red = 0;
             green = 255;
-            blue = 0;
+            blue = 255;
         } else if (newColorLevel < 2 && newColorLevel >= 1) {
             red = 0;
             green = 255;
-            blue = 255;
+            blue = 0;
         } else if (newColorLevel < 3 && newColorLevel >= 2) {
             red = 0;
             green = 0;
