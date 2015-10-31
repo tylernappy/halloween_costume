@@ -8,6 +8,7 @@ var spark = require('spark')
 var havenondemand = require('havenondemand')
 var hodClient = new havenondemand.HODClient('http://api.havenondemand.com', process.env.hpe_apikey)
 var Twitter = require('twitter')
+var jsonfile = require('jsonfile')
 
 var twitterClient = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -21,10 +22,11 @@ spark.login({accessToken: process.env.access_token_spark})
 var port = process.env.PORT || 5000
 app.use(express.static(path.join(__dirname, 'public')))
 
-var nLogos = 0
-var nFaces = 0
+var values = require('./values.json');
+var nLogos = values.nLogos
+var nFaces = values.nFaces
 var c = 0.2
-var powerBar
+var powerBar = values.powerBar
 var hashTag = 'halloweeniot'
 
 spark.getDevice(process.env.device_id_spark, function(err, device) {
@@ -54,6 +56,11 @@ spark.getDevice(process.env.device_id_spark, function(err, device) {
               console.log("# Faces " + nFaces)
               console.log("# Logos " + nLogos)
               console.log("Power bar " + powerBar)
+              jsonfile.writeFile('./values.json', {"nFaces": nFaces, "nLogos": nLogos, "powerBar": powerBar}, function (err) {
+                if(err){
+                  console.error(err)
+                }
+              })
               // Microcontroller access software
               device.callFunction('sendFaces', nFaces, function(error1, data1) {
                 if (err) {

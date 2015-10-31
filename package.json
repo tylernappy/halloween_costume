@@ -12,6 +12,7 @@
     "dotenv": "^1.2.0",
     "express": "^4.13.3",
     "havenondemand": "^1.0.1",
+    "jsonfile": "^2.2.3",
     "spark": "^1.0.0",
     "twitter": "^1.2.5"
   }
